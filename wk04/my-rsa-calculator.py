@@ -1,7 +1,7 @@
 import binascii
 
 
-msg = "SchnuSchnu"
+msg = "18"
 msg_hex = int(binascii.b2a_hex(msg.encode()).decode())
 p = int(17)
 q = int(29)
