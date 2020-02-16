@@ -1,8 +1,6 @@
 import binascii
 
-
-msg = "18"
-msg_hex = int(binascii.b2a_hex(msg.encode()).decode())
+msg = int(18)
 p = int(17)
 q = int(29)
 e = int(3)
