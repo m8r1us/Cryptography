@@ -1,6 +1,9 @@
-# V0.5
-# Author: M8r1us
+# V0.6
+# Author: m8r1us
 # Link: https://github.com/m8r1us/esecurity
+# Comment: 
+# This is a simple RSA implementation. It does not want to be neither fast nor safe!
+# The aim is to provide a working and easy to read codebase to learn the RSA algorithm.
 
 import binascii
 import random
@@ -11,7 +14,7 @@ import math
 # -----------------
 
 e = int(65537) # A very common value for the public exponent is e=65537, because 65537=216+1, which has a nice binary representation (like all Fermat primes): 10000000000000001
-length = 29
+length = 29 # length of p and q
 
 # -----------------
 # 1 FUNCTIONS
@@ -40,7 +43,8 @@ def isPrime(num):
 
 # Generate primes
 def get_primes(start, stop):
-    """Return a list of prime numbers in ``range(start, stop)``."""
+    #Return a list of prime numbers in ``range(start, stop)``.
+
     if start >= stop:
         return []
 
@@ -58,27 +62,16 @@ def get_primes(start, stop):
 
     return primes
 
-# are_relatively_prime
-def are_relatively_prime(a, b):
-    """Return ``True`` if ``a`` and ``b`` are two relatively prime numbers.
-
-    Two numbers are relatively prime if they share no common factors,
-    i.e. there is no integer (except 1) that divides both.
-    """
+# Find relatively prime numbers
+# Two numbers are relatively prime if they share no common factors, i.e. there is no integer (except 1) that divides both.
+def are_relatively_prime(a, b):  
+    #Return ``True`` if ``a`` and ``b`` are two relatively prime numbers.
     for n in range(2, min(a, b) + 1):
         if a % n == b % n == 0:
             return False
     return True
 
-# GCD
-# CALCULATION OF GCD FOR 'e' CALCULATION
-def gcd(a, b):
-    while b:
-        a, b = b, a%b
-        print ("a:", a)
-    return a
-
-#Extended Euclidean Algorithm
+#Extended Euclidean Algorithm (GCD)
 def eea(a,b):
     if(a%b==0):
         return(b,0,1)
@@ -88,14 +81,13 @@ def eea(a,b):
         print("%d = %d*(%d) + (%d)*(%d)"%(gcd,a,t,s,b))
         return(gcd,t,s)
  
-#Multiplicative Inverse
-''' The following code would also calculate d. But it's slower
-for d in range(3, phi, 2):
-    if d * e % phi == 1:
-        break
-else:
-    raise AssertionError("cannot find 'd' with p={!r}, q={!r} and e={!r}".format(p, q, e))
-'''
+# Function to find modular inverse
+#The following code would also calculate d (slower):
+# for d in range(3, phi, 2):
+#     if d * e % phi == 1:
+#         break
+# else:
+#     raise AssertionError("cannot find 'd' with p={!r}, q={!r} and e={!r}".format(p, q, e))
 def mult_inv(e,r):
     gcd,s,_=eea(e,r)
     if(gcd!=1):
@@ -108,20 +100,22 @@ def mult_inv(e,r):
         return s%r
 
 # Encryption
-def encrypt(pub_key,n_text):
+# If m_text is the message to be transmitted, it is encrypted as c_text ≡ m_text^e * (mod n) and c_text is send over network.
+def encrypt(pub_key,m_text):
     e,n=pub_key
-    hex_data = binascii.hexlify(n_text.encode())
+    hex_data = binascii.hexlify(m_text.encode())
     plain_text = int(hex_data, 16)
-    print("plain text integer: \t\t", plain_text)
+    print("Your original message as int: \t", plain_text)
 
     if plain_text > n:
         raise Exception("plain text too large for key (n)")
 
-    encrypted_text = pow(plain_text, e, n) #encrypted_text = (plain_text**e)%n
+    c_text = pow(plain_text, e, n) #c_text = (plain_text**e)%n
     
-    return encrypted_text
+    return c_text
 
 # Decryption
+# Upon recieving the encrypted message c_text, it is descrypted as m ≡ c_text^d * (mod n) to retrieve original message m.
 def decrypt(priv_key,c_text):
     d,n=priv_key
     decrypted_text = pow(c_text, d, n) #decrypted_text=(int(c_text)**d)%n
@@ -130,10 +124,13 @@ def decrypt(priv_key,c_text):
 
     return decrypted_decoded
 
-# --------- MAIN ----------
+# -----------------
+# 2 MAIN
+# -----------------
+
 print("-------------------------------------------------------")
-print("-> 1 STEP <-")
-print("Create a public-private key pair (p and q)")
+print("-> 1 STEP (p,q) <-")
+print("-> Generate 2 distinct random prime numbers p and q")
 print("-------------------------------------------------------\n")
 RandomGenerator = input("RandomGenerator for the Primes? (Yes/No): ")
 
@@ -184,8 +181,8 @@ print("The first factor of the modulus (p) is: ",p)
 print("The second factor of the modulus (q) is: ",q)
 
 print("\n-------------------------------------------------------")
-print("-> 2 STEP <-")
-print("Compute n = p*q")
+print("-> 2 STEP (n) <-")
+print("-> Compute n = pq. n is used as the modulus for both the public and private keys. Its length is the key length.")
 print("-------------------------------------------------------\n")
 
 # Compute n = pq. n is used as the modulus for both the public and private keys. Its length is the key length.
@@ -193,8 +190,8 @@ n = p * q
 print("n is: ",n)
 
 print("\n-------------------------------------------------------")
-print("-> 3 STEP <-")
-print("Compute phi = (p-1)*(q-1)")
+print("-> 3 STEP (phi) <-")
+print("Compute phi = (p-1)*(q-1) where phi is Euler’s totient function.")
 print("-------------------------------------------------------\n")
 
 #Eulers Toitent 'phi'
@@ -203,7 +200,7 @@ phi= (p-1)*(q-1)
 print("Eulers Toitent(phi) is: ",phi)
 
 print("\n-------------------------------------------------------")
-print("-> 4 STEP <-")
+print("-> 4 STEP (e) <-")
 print("Choose an integer e such that 1 < e < phi and gcd(e, phi)")
 print("-------------------------------------------------------\n")
 
@@ -225,12 +222,14 @@ if phi < e:
 print("The value of e is: ",e)
 
 print("\n-------------------------------------------------------")
-print("-> 5 STEP <-")
+print("-> 5 STEP (d) <-")
 print("Find d such that (d * e - 1) is divisible by phi (inverse modulus)")
 print("-------------------------------------------------------\n")
 
 # -> d Value Calculation
-# Third step: find ``d`` such that ``(d * e - 1)`` is divisible by ``(p - 1) * (q - 1)``.
+# Find ``d`` such that ``(d * e - 1)`` is divisible by ``(p - 1) * (q - 1)``.
+# Determine d as d ≡ e−1 (mod φ(n)); i.e., d is the multiplicative inverse of e (modulo φ(n))
+# modinv is calculated using Extended Euclidean Algorithm.
 
 d = mult_inv(e,phi)
 print("The value of d is: ",d)
@@ -262,7 +261,8 @@ print("Public Key is: \t",public)
 
 print("\n-------------------------------------------------------")
 print("-> 7 STEP <-")
-print("Message encryption / decryption")
+print("Message encryption [c ≡ m^e * (mod n)]")
+print("Message decryption [m ≡ c^d * (mod n)]")
 print("-------------------------------------------------------\n")
 
 #Message
@@ -273,13 +273,15 @@ print("-------------------------------------------------------\n")
 choose = input("Type '1' for encryption and '2' for decryption: ")
 print("-------------------------------------------------------")
 if(choose=='1'):
-    enc_msg=encrypt(public,message)
-    print("Your encrypted message is: \t",enc_msg)
+    print("Your original message (m) is: \t",message)
+    c_text=encrypt(public,message)
+    print("Your encrypted message (c) is: \t",c_text)
     print("-------------------------------------------------------")
-    print("Your decrypted message is: \t",decrypt(private,enc_msg))
+    print("Your encrypted message (c) is: \t",c_text)
+    print("Your decrypted message (m) is: \t",decrypt(private,c_text))
     print("-------------------------------------------------------")
 elif(choose=='2'):
-    print("Your decrypted message is: \t",decrypt(private,int(message)))
+    print("Your decrypted message (m) is: \t",decrypt(private,int(message)))
     print("-------------------------------------------------------")
 else:
     print("You entered the wrong option.")
