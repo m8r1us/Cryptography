@@ -1,4 +1,4 @@
-# V0.6
+# V0.7
 # Author: m8r1us
 # Link: https://github.com/m8r1us/esecurity
 # Comment: 
@@ -144,8 +144,8 @@ if RandomGenerator == "Yes":
     # by ``length``, therefore it must be in ``range(n_min, n_max + 1)``.
     # The argument ``length`` specifies the bit length of the number ``n`` shared between
     # the two keys: the higher, the better.
-    n_min = 1 << (length - 1)
-    n_max = (1 << length) - 1
+    n_min = 1 << (length - 1) # bitwise shift same as: 2**(10 - 1)
+    n_max = (1 << length) - 1 # bitwise shift same as: (2**10) - 1
 
     # The key is stronger if ``p`` and ``q`` have similar bit length. We
     # choose two prime numbers in ``range(start, stop)`` so that the
