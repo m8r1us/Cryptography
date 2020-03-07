@@ -64,39 +64,38 @@ def EccMultiply(xs,ys,Scalar): # Double & add. EC Multiplication, Not true multi
             time.sleep(2)
     return (Qx,Qy)
 
-print ("")
-print ("******* Public Key Generation *********")
+
+print ("\n******* Public Key Generation *********")
 xPublicKey, yPublicKey = EccMultiply(Gx,Gy,privKey)
-print ("")
-print ("the private key (in base 10 format):")
+
+print ("\nthe private key (in base 10 format):")
 print (privKey) 
-print ("")
-print ("the uncompressed public key (starts with '04' & is not the public address):")
+
+print ("\nthe uncompressed public key (starts with '04' & is not the public address):")
 print ("04",xPublicKey,yPublicKey)
-print ("")
-print ("the uncompressed public key (HEX):")
+
+print ("\nthe uncompressed public key (HEX):")
 print ("04" + "%064x" % xPublicKey + "%064x" % yPublicKey) 
-print ("")
-print ("the official Public Key - compressed:")
+
+print ("\nthe official Public Key - compressed:")
 if yPublicKey % 2 == 1: # If the Y value for the Public Key is odd.
     print ("03"+str(hex(xPublicKey)[2:]).zfill(64))
 else: # Or else, if the Y value is even.
     print ("02"+str(hex(xPublicKey)[2:]).zfill(64))
-time.sleep(4)
-print ("")
-print ("******* Signature Generation *********")
+time.sleep(2)
+
+print ("\n******* Signature Generation *********")
 xRandSignPoint, yRandSignPoint = EccMultiply(Gx,Gy,RandNum)
 r = xRandSignPoint % N
-print ("")
-print ("r =", r)
+
+print ("\nr =", r)
 s = ((HashOfThingToSign + r*privKey)*(modinv(RandNum,N))) % N 
 print ("s =", s)
-time.sleep(4)
-print ("")
-print ("******* Signature Verification *********>>")
+time.sleep(2)
+
+print ("\n******* Signature Verification *********>>")
 w = modinv(s,N)
 xu1, yu1 = EccMultiply(Gx,Gy,(HashOfThingToSign * w)%N)
 xu2, yu2 = EccMultiply(xPublicKey,yPublicKey,(r*w)%N)
 x,y = ECadd(xu1,yu1,xu2,yu2)
 print (r==x)
-print ("")
