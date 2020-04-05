@@ -1,6 +1,6 @@
 # example of proof-of-work algorithm
 '''
-Bitcoin’s proof of work is very similar to the challenge shown in Example 8-10. 
+Bitcoin’s proof of work is very similar to the challenge in this script 
 The miner constructs a candidate block filled with transactions. 
 Next, the miner calculates the hash of this block’s header and sees if it is smaller than the current target. 
 If the hash is not less than the target, the miner will modify the nonce (usually just incrementing it by one) and try again. 
