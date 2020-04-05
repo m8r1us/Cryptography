@@ -1,7 +1,12 @@
-#!/usr/bin/env python
-
 # example of proof-of-work algorithm
-# https://www.oreilly.com/library/view/mastering-bitcoin/9781491902639/ch08.html
+'''
+Bitcoin’s proof of work is very similar to the challenge shown in Example 8-10. 
+The miner constructs a candidate block filled with transactions. 
+Next, the miner calculates the hash of this block’s header and sees if it is smaller than the current target. 
+If the hash is not less than the target, the miner will modify the nonce (usually just incrementing it by one) and try again. 
+At the current difficulty in the bitcoin network, miners have to try quadrillions of times before finding a nonce that results in a low enough block header hash.
+https://www.oreilly.com/library/view/mastering-bitcoin/9781491902639/ch08.html
+'''
 
 import hashlib
 import time
